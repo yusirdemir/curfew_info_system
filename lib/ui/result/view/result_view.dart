@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_share/instagram_share.dart';
 import 'package:intl/intl.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ResultView extends StatefulWidget {
   final String name;
@@ -62,6 +63,7 @@ class _ResultViewState extends State<ResultView> {
   }
 
   ScreenshotController screenshotController = ScreenshotController();
+  bool shot = false;
 
   @override
   Widget build(BuildContext context) {
@@ -111,24 +113,66 @@ class _ResultViewState extends State<ResultView> {
                 SizedBox(
                   height: 30,
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 50),
-                  width: double.maxFinite,
-                  child: RaisedButton(
-                    onPressed: () async {
-                      await screenshotController.capture().then((File image) {
-                        InstagramShare.share(image.path, 'image');
-                      }).catchError((onError) {
-                        print(onError);
-                      });
-                    },
-                    padding: EdgeInsets.symmetric(vertical: 2),
-                    elevation: 0.0,
-                    color: Colors.black87,
-                    textColor: Colors.white,
-                    child: Text('İnstagramda Paylaş'),
-                  ),
-                )
+                shot
+                    ? Container()
+                    : Container(
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        width: double.maxFinite,
+                        child: RaisedButton(
+                          onPressed: () async {
+                            setState(() {
+                              shot = true;
+                            });
+                            await screenshotController
+                                .capture()
+                                .then((File image) {
+                              InstagramShare.share(image.path, 'image');
+                            }).catchError((onError) {
+                              print(onError);
+                            });
+                          },
+                          padding: EdgeInsets.symmetric(vertical: 2),
+                          elevation: 0.0,
+                          color: Colors.black87,
+                          textColor: Colors.white,
+                          child: Text('İnstagramda Paylaş'),
+                        ),
+                      ),
+                SizedBox(
+                  height: 20,
+                ),
+                shot
+                    ? Container(
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        width: double.maxFinite,
+                        child: RaisedButton(
+                          onPressed: () {},
+                          padding: EdgeInsets.symmetric(vertical: 2),
+                          elevation: 0.0,
+                          color: Colors.black87,
+                          textColor: Colors.white,
+                          child: Text('Link =>   https://bit.ly/curfew-apk'),
+                        ),
+                      )
+                    : Container(
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        width: double.maxFinite,
+                        child: RaisedButton(
+                          onPressed: () async {
+                            const url = 'https://bit.ly/curfew_donation';
+                            if (await canLaunch(url)) {
+                              await launch(url);
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          },
+                          padding: EdgeInsets.symmetric(vertical: 2),
+                          elevation: 0.0,
+                          color: Color(0xff6c5ce7),
+                          textColor: Colors.white,
+                          child: Text('Bağış Yap'),
+                        ),
+                      )
               ],
             ),
           )),

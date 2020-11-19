@@ -32,7 +32,8 @@ dependencies:
   modal_bottom_sheet: ^1.0.0+1
   screenshot: ^0.2.0
   instagram_share: ^0.1.9
-  
+  url_launcher: ^5.7.10
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
